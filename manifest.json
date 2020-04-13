@@ -1,0 +1,28 @@
+{
+  "name": "Spotter",
+  "version": "0.1",
+  "description": "Update HubSpot articles with raw HTML.",
+  "permissions": ["activeTab", "declarativeContent"],
+  "options_page": "options.html",
+  "devtools_page": "devtools.html",
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "page_action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "images/spotter16.png",
+      "32": "images/spotter32.png",
+      "48": "images/spotter48.png",
+      "128": "images/spotter128.png"
+    }
+  },
+  "icons": {
+    "16": "images/spotter16.png",
+    "32": "images/spotter32.png",
+    "48": "images/spotter48.png",
+    "128": "images/spotter128.png"
+  },
+  "manifest_version": 2
+}
