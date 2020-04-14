@@ -34,10 +34,14 @@ chrome.runtime.onConnect.addListener(function(port) {
         console.log("background: no responder for tab id " + message.tabId);
         return;
       }
-      responders[message.tabId]({
-        name: "devtools",
-        payload: message.payload
-      });
+      if (message.payload.name === "updated") {
+        chrome.tabs.reload(message.tabId);
+      } else {
+        responders[message.tabId]({
+          name: "devtools",
+          payload: message.payload
+        });
+      }
       break;
     default:
       console.log("background: unexpected DevTools message: " + JSON.stringify(message));
