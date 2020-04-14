@@ -9,6 +9,26 @@
       textarea {
         width: 500px;
         height: 250px;
+        margin-bottom: 5px;
+      }
+      .form-group {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 5px;
+      }
+      label {
+        font-size: 16px;
+        width: 65px;
+      }
+      input {
+        flex-grow: 1;
+      }
+      button {
+        float: right;
+        margin-left: 5px;
+      }
+      p {
+        margin: 0 0 11px;
       }
       .success {
         color: green;
@@ -20,9 +40,19 @@
   </head>
   <body>
     <h1>HTML → HubSpot</h1>
-    <textarea id="content"></textarea>
-    <button id="update">Update</button>
-    <p id="result"></p>
+    <form>
+      <div class="form-group">
+        <label>Title:</label>
+        <input id="title" type="text" placeholder="Enter a title">
+      </div>
+      <div class="form-group">
+        <label>Subtitle:</label>
+        <input id="subtitle" type="text" placeholder="Enter a subtitle">
+      </div>
+    </form>
+    <textarea id="content" placeholder="Enter the article HTML here"></textarea>
+    <button id="update">Update Article</button>
+    <p id="result" class="result"></p>
     <script src="popup.js"></script>
   </body>
 </html>
