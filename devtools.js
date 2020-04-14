@@ -19,10 +19,10 @@ function onRequestFinished(har) {
   }
 }
 
-function createXHROptions(request, html) {
+function updateArticle(request, html) {
   let data = JSON.parse(request.postData.text);
   data.articleBody = html;
-  return {
+  return sendXHR({
     method: request.method,
     url: request.url,
     timeout: parseInt(findValue(request.queryString, "clienttimeout")),
@@ -34,7 +34,7 @@ function createXHROptions(request, html) {
       "Accept": findValue(request.headers, "Accept")
     },
     data: JSON.stringify(data)
-  };
+  });
 }
 
 function findValue(entries, name) {
@@ -71,7 +71,15 @@ background.onMessage.addListener(function(message) {
       if (latest == undefined) {
         respond({name: "no-request"});
       } else {
-        respond({name: "options", options: createXHROptions(latest, inner.html)});
+        updateArticle(latest, inner.html).then(function(xhr) {
+          if (xhr.status === 200) {
+            respond({name: "updated"});
+          } else {
+            respond({name: "failed", reason: "server responded with" + xhr.status});
+          }
+        }).catch(function(error) {
+          respond({name: "failed", reason: error});
+        });
       }
       return;
     }

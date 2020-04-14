@@ -2,7 +2,12 @@
   "name": "Spotter",
   "version": "0.1",
   "description": "Update HubSpot articles with raw HTML.",
-  "permissions": ["activeTab", "declarativeContent"],
+  "permissions": [
+    "activeTab",
+    "declarativeContent",
+    "*://app.hubspot.com/*",
+    "*://api.hubspot.com/*"
+  ],
   "options_page": "options.html",
   "devtools_page": "devtools.html",
   "background": {

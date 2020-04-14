@@ -34,30 +34,11 @@ chrome.runtime.onConnect.addListener(function(port) {
         console.log("background: no responder for tab id " + message.tabId);
         return;
       }
-      switch (message.payload.name) {
-      case "options:":
-        let options = message.payload.options;
-        chrome.tabs.executeScript(message.tabId, {
-          code: "alert('hi');"
-        });
-        break;
-      default:
-        responders[message.tabId]({
-          name: "devtools",
-          payload: message.payload
-        });
-        break;
-      }
+      responders[message.tabId]({
+        name: "devtools",
+        payload: message.payload
+      });
       break;
-      // updateArticle(latest, inner.html).then(function(xhr) {
-      //   if (xhr.status === 200) {
-      //     respond({name: "updated"});
-      //   } else {
-      //     respond({name: "failed", reason: "server responded with" + xhr.status});
-      //   }
-      // }).catch(function(error) {
-      //   respond({name: "failed", reason: error});
-      // });
     default:
       console.log("background: unexpected DevTools message: " + JSON.stringify(message));
       break;
