@@ -29,16 +29,35 @@ chrome.runtime.onConnect.addListener(function(port) {
     case "init":
       connections[message.tabId] = port;
       break;
-    case "popup":
+    case "response":
       if (!(message.tabId in responders)) {
         console.log("background: no responder for tab id " + message.tabId);
         return;
       }
-      responders[message.tabId]({
-        name: "devtools",
-        payload: message.payload
-      });
+      switch (message.payload.name) {
+      case "options:":
+        let options = message.payload.options;
+        chrome.tabs.executeScript(message.tabId, {
+          code: "alert('hi');"
+        });
+        break;
+      default:
+        responders[message.tabId]({
+          name: "devtools",
+          payload: message.payload
+        });
+        break;
+      }
       break;
+      // updateArticle(latest, inner.html).then(function(xhr) {
+      //   if (xhr.status === 200) {
+      //     respond({name: "updated"});
+      //   } else {
+      //     respond({name: "failed", reason: "server responded with" + xhr.status});
+      //   }
+      // }).catch(function(error) {
+      //   respond({name: "failed", reason: error});
+      // });
     default:
       console.log("background: unexpected DevTools message: " + JSON.stringify(message));
       break;
@@ -60,7 +79,7 @@ chrome.runtime.onConnect.addListener(function(port) {
 
 // Forward messages from the popup window to DevTools.
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-  if (request.name !== "update") {
+  if (request.name !== "devtools") {
     console.log("background: unexpected message: " + JSON.stringify(request));
     return;
   }
@@ -72,9 +91,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   }
   responders[tabId] = sendResponse;
   connections[tabId].postMessage({
-    name: "popup",
+    name: "request",
     tabId: tabId,
-    payload: request,
+    payload: request.payload,
   });
   return true;
 });
