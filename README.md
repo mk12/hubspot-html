@@ -7,7 +7,7 @@ Spotter is a Chrome extension that allows you to upload HTML code to HubSpot art
 1. Clone the repository.
 2. Go to chrome://extensions in Chrome.
 3. Click "Load unpacked".
-4. Choose the folder where you cloned spotter.
+4. Choose the folder where you cloned Spotter.
 
 ## Usage
 
