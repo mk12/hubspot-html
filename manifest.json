@@ -4,16 +4,27 @@
   "description": "Update HubSpot articles with raw HTML.",
   "permissions": [
     "activeTab",
-    "declarativeContent",
-    "*://app.hubspot.com/*",
-    "*://api.hubspot.com/*"
+    "clipboardWrite",
+    "declarativeContent"
   ],
   "options_page": "options.html",
   "devtools_page": "devtools.html",
   "background": {
-    "scripts": ["background.js"],
+    "scripts": [
+      "background.js"
+    ],
     "persistent": false
   },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://app.hubspot.com/knowledge/*/edit/*"
+      ],
+      "js": [
+        "content.js"
+      ]
+    }
+  ],
   "page_action": {
     "default_popup": "popup.html",
     "default_icon": {

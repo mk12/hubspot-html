@@ -1,6 +1,13 @@
 "use strict";
 
-let background = chrome.runtime.connect({name: "devtools"});
+let background = chrome.runtime.connect({ name: "devtools" });
+
+function log() {
+  background.postMessage({
+    name: "log",
+    payload: arguments
+  });
+}
 
 background.postMessage({
   name: "init",
@@ -8,7 +15,7 @@ background.postMessage({
 });
 
 const URL_REGEX =
-/^https:\/\/api\.hubspot\.com\/knowledge-content\/v1\/knowledge-articles\/[0-9]+\?portalId=.+$/;
+  /^https:\/\/api\.hubspot\.com\/knowledge-content\/v1\/knowledge-articles\/[0-9]+\?portalId=.+$/;
 
 let latest;
 
@@ -17,24 +24,6 @@ function onRequestFinished(har) {
   if (request.method === "PUT" && URL_REGEX.test(request.url)) {
     latest = request;
   }
-}
-
-function updateArticle(request, html) {
-  let data = JSON.parse(request.postData.text);
-  data.articleBody = html;
-  return sendXHR({
-    method: request.method,
-    url: request.url,
-    timeout: parseInt(findValue(request.queryString, "clienttimeout")),
-    withCredentials: true,
-    headers: {
-      "X-HS-Referer": findValue(request.headers, "X-HS-Referer"),
-      "content-type": findValue(request.headers, "content-type"),
-      "X-HubSpot-CSRF-hubspotapi": findValue(request.headers, "X-HubSpot-CSRF-hubspotapi"),
-      "Accept": findValue(request.headers, "Accept")
-    },
-    data: JSON.stringify(data)
-  });
 }
 
 function findValue(entries, name) {
@@ -48,41 +37,33 @@ function findValue(entries, name) {
 
 let listener;
 
-background.onMessage.addListener(function(message) {
-  let respond = function(payload) {
+background.onMessage.addListener(message => {
+  let respond = payload => {
     background.postMessage({
       name: "response",
       tabId: message.tabId,
       payload: payload
     });
-  }
+  };
   if (message.name === "request") {
     let inner = message.payload;
     switch (inner.name) {
-    case "listen":
-      if (listener != undefined) {
-        chrome.devtools.network.onRequestFinished.removeListener(listener);
-      }
-      listener = onRequestFinished;
-      chrome.devtools.network.onRequestFinished.addListener(listener);
-      respond({name: "listening"});
-      return;
-    case "update":
-      if (latest == undefined) {
-        respond({name: "no-request"});
-      } else {
-        updateArticle(latest, inner.html).then(function(xhr) {
-          if (xhr.status === 200) {
-            respond({name: "updated"});
-          } else {
-            respond({name: "failed", reason: "server responded with" + xhr.status});
-          }
-        }).catch(function(error) {
-          respond({name: "failed", reason: error});
-        });
-      }
-      return;
+      case "listen":
+        if (listener != undefined) {
+          chrome.devtools.network.onRequestFinished.removeListener(listener);
+        }
+        listener = onRequestFinished;
+        chrome.devtools.network.onRequestFinished.addListener(listener);
+        respond({ name: "listening" });
+        return;
+      case "get":
+        if (latest == undefined) {
+          respond({ name: "no-request" });
+        } else {
+          respond({ name: "got", payload: latest });
+        }
+        return;
     }
   }
-  console.log("devtools: unexpected message: " + JSON.stringify(message));
+  log("devtools: unexpected message: ", message);
 });

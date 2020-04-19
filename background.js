@@ -6,7 +6,11 @@ chrome.runtime.onInstalled.addListener(function() {
     chrome.declarativeContent.onPageChanged.addRules([{
       conditions: [
         new chrome.declarativeContent.PageStateMatcher({
-          pageUrl: {hostEquals: "app.hubspot.com"},
+          pageUrl: {
+            hostEquals: "app.hubspot.com",
+            pathPrefix: "/knowledge/",
+            pathContains: "/edit/"
+          },
         })
       ],
       actions: [
@@ -19,13 +23,16 @@ chrome.runtime.onInstalled.addListener(function() {
 // Keep track of DevTools connections.
 let connections = {};
 let responders = {};
-chrome.runtime.onConnect.addListener(function(port) {
+chrome.runtime.onConnect.addListener(port => {
   if (port.name !== "devtools") {
     console.log("background: unexpected connection: " + port.name);
     return;
   }
-  let extensionListener = function(message) {
+  let extensionListener = message => {
     switch (message.name) {
+    case "log":
+      console.log("devtools: ", message.payload);
+      break;
     case "init":
       connections[message.tabId] = port;
       break;
@@ -34,23 +41,19 @@ chrome.runtime.onConnect.addListener(function(port) {
         console.log("background: no responder for tab id " + message.tabId);
         return;
       }
-      if (message.payload.name === "updated") {
-        chrome.tabs.reload(message.tabId);
-      } else {
-        responders[message.tabId]({
-          name: "devtools",
-          payload: message.payload
-        });
-      }
+      responders[message.tabId]({
+        name: "devtools",
+        payload: message.payload
+      });
       break;
     default:
-      console.log("background: unexpected DevTools message: " + JSON.stringify(message));
+      console.log("background: unexpected DevTools message: ", message);
       break;
     }
   }
 
   port.onMessage.addListener(extensionListener);
-  port.onDisconnect.addListener(function(port) {
+  port.onDisconnect.addListener(port => {
     port.onMessage.removeListener(extensionListener);
     let tabs = Object.keys(connections);
     for (let i = 0, len = tabs.length; i < len; i++) {
@@ -63,9 +66,9 @@ chrome.runtime.onConnect.addListener(function(port) {
 });
 
 // Forward messages from the popup window to DevTools.
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.name !== "devtools") {
-    console.log("background: unexpected message: " + JSON.stringify(request));
+    console.log("background: unexpected message: ", request);
     return;
   }
   let tabId = request.tabId;
