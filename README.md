@@ -1,25 +1,25 @@
-# Spotter
+# HubSpot HTML
 
-Spotter is a Chrome extension that allows you to upload HTML code to HubSpot articles.
+HubSpot HTML is a Chrome extension that allows you to edit HubSpot articles as HTML.
 
 ## Installation
 
 1. Clone the repository.
 2. Go to chrome://extensions in Chrome.
 3. Turn on "Developer mode" and click "Load unpacked".
-4. Choose the folder where you cloned Spotter.
+4. Choose the folder where you cloned HubSpot HTML.
 
 ## Usage
 
 1. Visit a HubSpot article editing page (the URL should look like `https://app.hubspot.com/knowledge/####/edit/####`).
-2. Type something in the article. One letter is fine. You just need to make it save something so the extension can replay the request.
-3. Open DevTools by right-clicking and choosing "Inspect".
-4. Click the Spotter extension icon in the toolbar (it should be orange, not gray).
-5. Paste in your HTML and click update.
-6. Click "Reload" in the "Reload site?" dialog box.
+2. Click on the HubSpot HTML extension icon in the toolbar (it should be orange, not gray).
+3. Edit the HTML in the popup page.
+4. Click "Update Article".
 
 ## License
 
+"HubSpot" is an official trademark of HubSpot, Inc. This work is not formally related to, endorsed by, or affiliated with HubSpot, Inc.
+
 © 2020 Mitchell Kember
 
-Spotter is available under the MIT License; see LICENSE for details.
+HubSpot HTML is available under the MIT License; see LICENSE for details.
