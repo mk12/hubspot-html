@@ -20,19 +20,20 @@ function parse(html) {
   let title;
   const h1 = /^\s*<h1>([^<]*)<\/h1>/i.exec(html);
   if (h1) {
-    title = decodeEntities(h1[1]);
+    title = decodeEntities(h1[1]).trim();
     html = html.substring(h1.index + h1[0].length);
   }
   let subtitle;
   const h2 = /^\s*<h2>([^<]*)<\/h2>/i.exec(html);
   if (h2) {
-    subtitle = decodeEntities(h2[1]);
+    subtitle = decodeEntities(h2[1]).trim();
     html = html.substring(h2.index + h2[0].length);
   }
+  html = html.trim();
   return {
-    title: title.trim(),
-    subtitle: subtitle.trim(),
-    body: html.trim()
+    title: title,
+    subtitle: subtitle,
+    body: html
   };
 }
 
